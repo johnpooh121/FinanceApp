@@ -11,3 +11,6 @@ phases:
     commands:
       - echo "Running tests and type checks"
       - npm run build --if-present
+artifacts:
+  files:
+    - '**/*'
