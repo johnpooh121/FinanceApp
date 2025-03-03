@@ -30,17 +30,19 @@ export class KorStockEntity extends BaseEntity {
   @Column({ unsigned: false })
   change: number;
 
-  @Column({ unsigned: true, type: 'bigint' })
-  tradingVolume: bigint;
+  // check whether these numbers fit in 2^53-1 range
 
   @Column({ unsigned: true, type: 'bigint' })
-  tradingValue: bigint;
+  tradingVolume: string;
 
   @Column({ unsigned: true, type: 'bigint' })
-  marketCap: bigint;
+  tradingValue: string;
 
   @Column({ unsigned: true, type: 'bigint' })
-  shareCount: bigint;
+  marketCap: string;
+
+  @Column({ unsigned: true, type: 'bigint' })
+  shareCount: string;
 
   @Column({ length: 32, nullable: true, type: 'varchar' })
   companyCategory: string | null;
