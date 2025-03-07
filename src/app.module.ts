@@ -16,6 +16,7 @@ import { CrawlModule } from './crawl/crawl.module';
       password: process.env.DB_PASSWORD,
       database: 'finance',
       autoLoadEntities: true,
+      timezone: 'UTC',
     }),
   ],
   controllers: [AppController],

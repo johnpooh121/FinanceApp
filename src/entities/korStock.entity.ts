@@ -1,13 +1,16 @@
 import { KorMarketType } from 'src/common/enum';
 import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity('korStock')
+@Entity('KorStock')
 export class KorStockEntity extends BaseEntity {
   @PrimaryColumn({ name: 'date', type: 'date' })
   date: string;
 
-  @PrimaryColumn({ length: 16 })
-  id: string;
+  @PrimaryColumn({ length: 32 })
+  isin: string;
+
+  @Column({ length: 16 })
+  code: string;
 
   @Column({ length: 32 })
   name: string;
@@ -16,10 +19,10 @@ export class KorStockEntity extends BaseEntity {
   marketType: KorMarketType;
 
   @Column({ unsigned: true })
-  openPrice: number;
+  adjClose: number;
 
   @Column({ unsigned: true })
-  closePrice: number;
+  openPrice: number;
 
   @Column({ unsigned: true })
   lowPrice: number;
@@ -29,6 +32,9 @@ export class KorStockEntity extends BaseEntity {
 
   @Column({ unsigned: false })
   change: number;
+
+  @Column({ type: 'float' })
+  changeRate: number;
 
   // check whether these numbers fit in 2^53-1 range
 
