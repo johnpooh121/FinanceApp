@@ -6,11 +6,12 @@ phases:
       nodejs: 18.x
     commands:
       - echo "Installing dependencies"
-      - npm install
+      - npm install -g pnpm
+      - pnpm install
   build:
     commands:
-      - echo "Running tests and type checks"
-      - npm run build --if-present
+      - echo "Building"
+      - pnpm build
 artifacts:
   files:
     - '**/*'
