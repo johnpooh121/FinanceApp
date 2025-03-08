@@ -12,6 +12,11 @@ phases:
     commands:
       - echo "Building"
       - pnpm build
+  post_build:
+    commands:
+      - ls -a
+      - cp package.json ./dist
+      - cp -r node_modules ./dist
 artifacts:
   files:
     - '**/*'
