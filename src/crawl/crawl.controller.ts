@@ -4,29 +4,40 @@ import moment from 'moment-timezone';
 import { CrawlService } from './crawl.service';
 import { DailyCrawlQueryRequest } from './dtos/daily-crawl-query.request';
 import { IndividualCrawlQueryRequest } from './dtos/individual-crawl-query.request';
+import { CrawlDividendService } from './services/crawl-dividend.service';
+import { CrawlInfoService } from './services/crawl-info.service';
+import { CrawlOhlcvService } from './services/crawl-ohlcv.service';
 
 @Controller('crawl')
 export class CrawlController {
-  constructor(private readonly crawlService: CrawlService) {}
+  constructor(
+    private readonly crawlService: CrawlService,
+    private readonly crawlOhlcv: CrawlOhlcvService,
+    private readonly crawlDividend: CrawlDividendService,
+    private readonly crawlInfo: CrawlInfoService,
+  ) {}
 
   @Post('/daily')
   @ApiOperation({ summary: '일일 한국 주식 데이터 크롤링' })
   async updateStockDaily(@Query() query: DailyCrawlQueryRequest) {
     const { date } = query;
     const hyphenDate = moment.utc(date ?? new Date()).format('YYYY-MM-DD');
-    return this.crawlService.updateDataByDate(hyphenDate);
+    await Promise.all([
+      this.crawlOhlcv.updateOhlcvByDate(hyphenDate),
+      this.crawlDividend.updateDailyDividendData(hyphenDate),
+    ]);
   }
 
   @Post('/basic-info')
   @ApiOperation({ summary: '한국 증권 종목 별 기본정보 데이터 크롤링' })
   async updateStockBasicInfo() {
-    return this.crawlService.updateBasicInfo();
+    return this.crawlInfo.updateBasicInfo();
   }
 
   @Post('/individual')
   @ApiOperation({ summary: '개별 종목 데이터 크롤링' })
   async updateIndividualStock(@Query() query: IndividualCrawlQueryRequest) {
-    return this.crawlService.updateIndividualStock(query);
+    return this.crawlOhlcv.updateOhlcvByCode(query);
   }
 
   @Post('/init')

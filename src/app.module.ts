@@ -4,6 +4,7 @@ import 'reflect-metadata';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CrawlModule } from './crawl/crawl.module';
+import { UtilModule } from './util/util.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CrawlModule } from './crawl/crawl.module';
       autoLoadEntities: true,
       timezone: 'UTC',
     }),
+    UtilModule,
   ],
   controllers: [AppController],
   providers: [AppService],
