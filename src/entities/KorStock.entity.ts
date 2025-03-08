@@ -71,6 +71,18 @@ export class KorStockEntity extends BaseEntity {
   @Column({ type: 'double', nullable: true })
   dy: number | null;
 
+  @Column({ unsigned: true, type: 'bigint', nullable: true })
+  foreignOwn: string | null;
+
+  @Column({ type: 'double', nullable: true })
+  foreignOwnRate: number | null;
+
+  @Column({ unsigned: true, type: 'bigint', nullable: true })
+  foreignLimit: string | null;
+
+  @Column({ type: 'double', nullable: true })
+  foreignExhaustionRate: number | null;
+
   @Column({
     type: 'datetime',
   })

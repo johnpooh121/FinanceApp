@@ -5,6 +5,7 @@ import { CrawlService } from './crawl.service';
 import { DailyCrawlQueryRequest } from './dtos/daily-crawl-query.request';
 import { IndividualCrawlQueryRequest } from './dtos/individual-crawl-query.request';
 import { CrawlDividendService } from './services/crawl-dividend.service';
+import { CrawlForeignOwnService } from './services/crawl-foreign-own.service';
 import { CrawlInfoService } from './services/crawl-info.service';
 import { CrawlOhlcvService } from './services/crawl-ohlcv.service';
 
@@ -15,6 +16,7 @@ export class CrawlController {
     private readonly crawlOhlcv: CrawlOhlcvService,
     private readonly crawlDividend: CrawlDividendService,
     private readonly crawlInfo: CrawlInfoService,
+    private readonly crawlForeignOwn: CrawlForeignOwnService,
   ) {}
 
   @Post('/daily')
@@ -25,6 +27,7 @@ export class CrawlController {
     await Promise.all([
       this.crawlOhlcv.updateOhlcvByDate(hyphenDate),
       this.crawlDividend.updateDailyDividendData(hyphenDate),
+      this.crawlForeignOwn.updateForeignOwnByDate(hyphenDate),
     ]);
   }
 

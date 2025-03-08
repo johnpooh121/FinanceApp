@@ -1,7 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { KorMarketType } from 'src/common/enum';
-import { KorStockEntity } from 'src/entities/KorStock.entity';
 import { KorStockInfoEntity } from 'src/entities/KorStockInfo.entity';
 import { UtilService } from 'src/util/util.service';
 import { Repository } from 'typeorm';
@@ -15,7 +14,8 @@ export class CrawlInfoService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    if (process.env.INIT_INFO) await this.updateBasicInfo();
+    const cnt = await this.stockInfoRepository.count({});
+    if (cnt === 0) await this.updateBasicInfo();
   }
 
   async updateBasicInfo() {

@@ -123,7 +123,7 @@ export class CrawlOhlcvService {
   async updateOhlcvByInfo(info: KorStockInfoEntity) {
     const { isin, code, korNameShorten, marketType, companyCategory } = info;
     console.log(
-      'updating data by ISIN code, name: ',
+      'updating ohlcv data by ISIN code, name: ',
       info.korNameShorten,
       ' code : ',
       info.code,
@@ -182,7 +182,7 @@ export class CrawlOhlcvService {
         ['date', 'isin'],
       );
 
-      console.log('stockInfo db upsert completed, code: ', info.code);
+      console.log('stock ohlcv db upsert completed, code: ', info.code);
     } catch (e) {
       console.log('error while updating basic info');
       console.log(e);

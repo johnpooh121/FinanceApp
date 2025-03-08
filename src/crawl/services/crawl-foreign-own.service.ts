@@ -8,7 +8,7 @@ import { UtilService } from 'src/util/util.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class CrawlDividendService {
+export class CrawlForeignOwnService {
   constructor(
     @InjectRepository(KorStockEntity)
     private readonly stockRepository: Repository<KorStockEntity>,
@@ -17,9 +17,9 @@ export class CrawlDividendService {
     private readonly util: UtilService,
   ) {}
 
-  async updateDailyDividendData(hyphenDate: string) {
+  async updateForeignOwnByDate(hyphenDate: string) {
     const day = moment.utc(hyphenDate).day();
-    console.log('updating dividend info for date : ', hyphenDate);
+    console.log('updating foreign own data for date : ', hyphenDate);
     if (day === 0 || day === 6) {
       console.log('today is not a business day');
       throw new BadRequestException('today is not a business day');
@@ -30,10 +30,9 @@ export class CrawlDividendService {
       ['mktId', 'ALL'],
       ['trdDd', plainDate],
       ['share', '1'],
-      ['money', '1'],
       ['csvxlx_isNo', 'false'],
       ['name', 'fileDown'],
-      ['url', 'dbms/MDC/STAT/standard/MDCSTAT03501'],
+      ['url', 'dbms/MDC/STAT/standard/MDCSTAT03701'],
     ]);
 
     const [data, codeMap] = await Promise.all([
@@ -81,12 +80,10 @@ export class CrawlDividendService {
             adjClose: Number(entries[2]),
             change: Number(entries[3]),
             changeRate: Number(entries[4]),
-            eps: entries[5] ? Number(entries[5]) : null,
-            per: entries[6] ? Number(entries[6]) : null,
-            bps: entries[8] ? Number(entries[8]) : null,
-            pbr: entries[9] ? Number(entries[9]) : null,
-            dps: entries[10] ? Number(entries[10]) : null,
-            dy: entries[11] ? Number(entries[11]) : null,
+            foreignOwn: entries[6],
+            foreignOwnRate: entries[7] ? Number(entries[7]) : null,
+            foreignLimit: entries[8],
+            foreignExhaustionRate: entries[9] ? Number(entries[9]) : null,
             updatedAt: current,
           };
         })
@@ -98,31 +95,31 @@ export class CrawlDividendService {
     return true;
   }
 
-  async updateDividendDataByInfo(info: KorStockInfoEntity) {
+  async updateForeignOwnByInfo(info: KorStockInfoEntity) {
+    const { isin, code, korNameShorten, marketType, companyCategory } = info;
     console.log(
-      'updating dividend info for issue : ',
+      'updating foreign own data for issue : ',
       info.korNameShorten,
       ' , ',
       info.code,
     );
+    const params = new URLSearchParams([
+      ['locale', 'ko_KR'],
+      ['mktId', 'ALL'],
+      ['searchType', '2'],
+      ['strtDd', STARTDATE.replace(/-/g, '')],
+      ['endDd', moment.utc().format('YYYYMMDD')],
+      ['isuCd', isin],
+      ['share', '1'],
+      ['csvxlx_isNo', 'false'],
+      ['name', 'fileDown'],
+      ['url', 'dbms/MDC/STAT/standard/MDCSTAT03702'],
+    ]);
     try {
-      const { isin, code, korNameShorten, marketType, companyCategory } = info;
-      const params = new URLSearchParams([
-        ['locale', 'ko_KR'],
-        ['mktId', 'ALL'],
-        ['strtDd', STARTDATE.replace(/-/g, '')],
-        ['endDd', moment.utc().format('YYYYMMDD')],
-        ['isuCd', isin],
-        ['share', '1'],
-        ['money', '1'],
-        ['csvxlx_isNo', 'false'],
-        ['name', 'fileDown'],
-        ['url', 'dbms/MDC/STAT/standard/MDCSTAT03502'],
-      ]);
-
       const data = await this.util.getRawData(params);
 
       const current = new Date();
+      console.log('updating DB');
 
       await this.stockRepository.upsert(
         data
@@ -145,21 +142,19 @@ export class CrawlDividendService {
               adjClose: Number(entries[1]),
               change: Number(entries[2]),
               changeRate: Number(entries[3]),
-              eps: entries[4] ? Number(entries[4]) : null,
-              per: entries[5] ? Number(entries[5]) : null,
-              bps: entries[6] ? Number(entries[6]) : null,
-              pbr: entries[7] ? Number(entries[7]) : null,
-              dps: entries[8] ? Number(entries[8]) : null,
-              dy: entries[9] ? Number(entries[9]) : null,
+              foreignOwn: entries[5],
+              foreignOwnRate: entries[6] ? Number(entries[6]) : null,
+              foreignLimit: entries[7],
+              foreignExhaustionRate: entries[8] ? Number(entries[8]) : null,
               updatedAt: current,
             };
           })
           .filter((el) => el != null),
         ['date', 'isin'],
       );
-      console.log('dividend data upsert completed, code: ', info.code);
+      console.log('foreign own db upsert completed, code: ', info.code);
     } catch (e) {
-      console.log('error while updating dividend');
+      console.log('error while updating foreign own');
       console.log(e);
       return false;
     }

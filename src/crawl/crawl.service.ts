@@ -5,6 +5,7 @@ import { KorStockInfoEntity } from 'src/entities/KorStockInfo.entity';
 import { UtilService } from 'src/util/util.service';
 import { Repository } from 'typeorm';
 import { CrawlDividendService } from './services/crawl-dividend.service';
+import { CrawlForeignOwnService } from './services/crawl-foreign-own.service';
 import { CrawlInfoService } from './services/crawl-info.service';
 import { CrawlOhlcvService } from './services/crawl-ohlcv.service';
 
@@ -19,6 +20,7 @@ export class CrawlService {
     private readonly crawlOhlcv: CrawlOhlcvService,
     private readonly crawlDividend: CrawlDividendService,
     private readonly crawlInfo: CrawlInfoService,
+    private readonly crawlForeignOwn: CrawlForeignOwnService,
   ) {}
 
   async initializeDB() {
@@ -32,6 +34,8 @@ export class CrawlService {
       cnt += 1;
       console.log('update cnt : ', cnt);
       jobList.push(this.crawlOhlcv.updateOhlcvByInfo(stock));
+      jobList.push(this.crawlForeignOwn.updateForeignOwnByInfo(stock));
+      jobList.push(this.crawlDividend.updateDividendDataByInfo(stock));
       if (jobList.length >= bulkSize) {
         await Promise.all(jobList);
         jobList = [];
