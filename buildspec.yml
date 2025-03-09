@@ -11,6 +11,8 @@ phases:
       - pwd
       - whoami
       - pnpm install --prod
+      - ls -al
+      - ls -al node_modules
   build:
     commands:
       - echo "Building"
