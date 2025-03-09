@@ -17,9 +17,12 @@ phases:
     commands:
       - echo "Building"
       - pnpm build
+      - ls -al node_modules
   post_build:
     commands:
-      - ls -a
+      - ls -al
+      - ls -al node_modules
 artifacts:
   files:
     - '**/*'
+  enable-symlinks: yes
