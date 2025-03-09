@@ -9,9 +9,8 @@ phases:
       - npm install -g pnpm
       - export NPM_CONFIG_UNSAFE_PERM=true
       - pwd
-      - ls -al /var/app
       - whoami
-      - pnpm install
+      - pnpm install --prod
   build:
     commands:
       - echo "Building"
