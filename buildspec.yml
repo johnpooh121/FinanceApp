@@ -7,7 +7,7 @@ phases:
     commands:
       - echo "Installing dependencies"
       - npm install -g pnpm
-      - sudo chown -R ec2-user:ec2-user /var/app
+      - export NPM_CONFIG_UNSAFE_PERM=true
       - pnpm install
   build:
     commands:
