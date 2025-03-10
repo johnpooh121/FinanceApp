@@ -1,17 +1,25 @@
-import { Injectable } from '@nestjs/common';
+import { DescribeInstancesCommand, EC2Client } from '@aws-sdk/client-ec2';
+import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import iconv from 'iconv-lite';
 import { KorMarketType } from 'src/common/enum';
 import { KorStockInfoEntity } from 'src/entities/KorStockInfo.entity';
+import { MetadataEntity } from 'src/entities/metadata.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
-export class UtilService {
+export class UtilService implements OnModuleInit {
   constructor(
     @InjectRepository(KorStockInfoEntity)
     private readonly stockInfoRepository: Repository<KorStockInfoEntity>,
+    @InjectRepository(MetadataEntity)
+    private readonly metadataRepository: Repository<MetadataEntity>,
   ) {}
+
+  async onModuleInit() {
+    if (process.env.IS_LOCAL !== 'true') return this.updatePrivateIP();
+  }
 
   makeKey(marketType: KorMarketType, code: string) {
     return `${marketType}:${code}`;
@@ -75,5 +83,54 @@ export class UtilService {
 
     const data = iconv.decode(rawData, 'euc-kr');
     return data;
+  }
+
+  async updatePrivateIP() {
+    const client = new EC2Client();
+    const cmd = new DescribeInstancesCommand({
+      Filters: [{ Name: 'instance-state-name', Values: ['running'] }],
+    });
+    const res = await client.send(cmd);
+    console.log(res);
+    console.log(res?.Reservations?.[0]?.Instances?.[0]?.Tags);
+    if (!res?.Reservations || res?.Reservations?.length === 0) {
+      console.log('no ec2 reservation!');
+      return null;
+    }
+    const instances = res?.Reservations[0]?.Instances?.filter(
+      (ec2) =>
+        ec2?.Tags &&
+        ec2?.Tags?.findIndex(
+          ({ Key: k, Value: v }) =>
+            k === 'elasticbeanstalk:environment-name' &&
+            v === 'Finance-App-env',
+        ) !== -1 &&
+        ec2.LaunchTime,
+    );
+
+    console.log(instances);
+
+    if (!instances || instances.length === 0) {
+      console.log('no finance cron instance!');
+      return null;
+    }
+    if (instances.length > 1) {
+      console.log('environment is updating, there are multiple instances.');
+      instances.sort(
+        (a, b) =>
+          (b.LaunchTime?.getTime() ?? 0) - (a.LaunchTime?.getTime() ?? 0),
+      );
+    }
+    await this.metadataRepository.upsert(
+      {
+        key: 'privateIP',
+        value: instances[0].PrivateIpAddress,
+      },
+      ['key'],
+    );
+    console.log(
+      'Successfully inserted private ip, ',
+      instances[0].PrivateIpAddress,
+    );
   }
 }

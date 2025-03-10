@@ -29,6 +29,7 @@ export class CrawlController {
       this.crawlDividend.updateDailyDividendData(hyphenDate),
       this.crawlForeignOwn.updateForeignOwnByDate(hyphenDate),
     ]);
+    return true;
   }
 
   @Post('/basic-info')
