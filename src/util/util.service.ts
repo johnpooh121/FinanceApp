@@ -10,12 +10,22 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class UtilService implements OnModuleInit {
+  private client;
+
   constructor(
     @InjectRepository(KorStockInfoEntity)
     private readonly stockInfoRepository: Repository<KorStockInfoEntity>,
     @InjectRepository(MetadataEntity)
     private readonly metadataRepository: Repository<MetadataEntity>,
-  ) {}
+  ) {
+    this.client = new EC2Client({
+      region: 'ap-northeast-2',
+      // credentials: {
+      //   accessKeyId: process.env.AWS_ACCESS_KEY as string,
+      //   secretAccessKey: process.env.AWS_SECRET_KEY as string,
+      // },
+    });
+  }
 
   async onModuleInit() {
     if (process.env.IS_LOCAL !== 'true') return this.updatePrivateIP();
@@ -86,11 +96,10 @@ export class UtilService implements OnModuleInit {
   }
 
   async updatePrivateIP() {
-    const client = new EC2Client();
     const cmd = new DescribeInstancesCommand({
       Filters: [{ Name: 'instance-state-name', Values: ['running'] }],
     });
-    const res = await client.send(cmd);
+    const res = await this.client.send(cmd);
     console.log(res);
     console.log(res?.Reservations?.[0]?.Instances?.[0]?.Tags);
     if (!res?.Reservations || res?.Reservations?.length === 0) {
