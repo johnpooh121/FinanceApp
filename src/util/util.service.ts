@@ -96,11 +96,11 @@ export class UtilService implements OnModuleInit {
   }
 
   async updatePrivateIP() {
+    console.log('saving private ip...');
     const cmd = new DescribeInstancesCommand({
       Filters: [{ Name: 'instance-state-name', Values: ['running'] }],
     });
     const res = await this.client.send(cmd);
-    console.log(res);
     console.log(res?.Reservations?.[0]?.Instances?.[0]?.Tags);
     if (!res?.Reservations || res?.Reservations?.length === 0) {
       console.log('no ec2 reservation!');
@@ -117,8 +117,6 @@ export class UtilService implements OnModuleInit {
         ec2.LaunchTime,
     );
 
-    console.log(instances);
-
     if (!instances || instances.length === 0) {
       console.log('no finance cron instance!');
       return null;
@@ -134,6 +132,7 @@ export class UtilService implements OnModuleInit {
       {
         key: 'privateIP',
         value: instances[0].PrivateIpAddress,
+        updatedAt: new Date(),
       },
       ['key'],
     );
