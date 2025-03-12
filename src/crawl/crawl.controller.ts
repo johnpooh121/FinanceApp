@@ -23,7 +23,13 @@ export class CrawlController {
   @ApiOperation({ summary: '일일 한국 주식 데이터 크롤링' })
   async updateStockDaily(@Query() query: DailyCrawlQueryRequest) {
     const { date } = query;
-    const hyphenDate = moment.utc(date ?? new Date()).format('YYYY-MM-DD');
+    let hyphenDate = date;
+    if (!hyphenDate) {
+      const now = moment.tz('Asia/Seoul');
+      if (now.hour() < 16) now.subtract({ day: 1 });
+      hyphenDate = now.format('YYYY-MM-DD');
+    }
+
     await Promise.all([
       this.crawlOhlcv.updateOhlcvByDate(hyphenDate),
       this.crawlDividend.updateDailyDividendData(hyphenDate),
