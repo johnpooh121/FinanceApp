@@ -46,4 +46,66 @@ export class CrawlService {
     await Promise.all(jobList);
     console.log('db initialize completed');
   }
+
+  async crawlDaily(hyphenDate) {
+    const codeMap = await this.util.getCodeMap();
+    try {
+      const info = codeMap.get('005930');
+      if (info) await this.crawlOhlcv.updateOhlcvByInfo(info);
+    } catch (e) {
+      console.log(e);
+    }
+    await Promise.all([
+      this.crawlOhlcv.updateOhlcvByDate(hyphenDate),
+      this.crawlDividend.updateDailyDividendData(hyphenDate),
+      this.crawlForeignOwn.updateForeignOwnByDate(hyphenDate),
+    ]);
+    await this.checkForStockSplit();
+  }
+
+  async checkForStockSplit() {
+    const dateList = (
+      await this.stockRepository
+        .createQueryBuilder('st')
+        .select('date')
+        .groupBy('date')
+        .orderBy('date', 'DESC')
+        .getRawMany()
+    ).map(({ date }) => date);
+
+    if (dateList.length < 2) return;
+    const [currStockList, prevStockList, infoMap] = await Promise.all([
+      this.stockRepository.find({ where: { date: dateList[0] } }),
+      this.stockRepository.find({ where: { date: dateList[1] } }),
+      this.util.getInfoMap(),
+    ]);
+
+    const prevStockMap = new Map(
+      prevStockList.map((stock) => [stock.isin, stock]),
+    );
+
+    for (const stock of currStockList) {
+      const prevStock = prevStockMap.get(stock.isin);
+      if (!prevStock) return;
+      if (prevStock.adjClose + stock.change !== stock.adjClose) {
+        console.log(
+          'stock split detected, key : ',
+          stock.isin,
+          ' name : ',
+          stock.name,
+        );
+        const targetInfo = infoMap.get(stock.isin);
+        if (targetInfo) {
+          await Promise.all([
+            this.crawlOhlcv.updateOhlcvByInfo(targetInfo),
+            this.crawlDividend.updateDividendDataByInfo(targetInfo),
+            this.crawlForeignOwn.updateForeignOwnByInfo(targetInfo),
+          ]);
+          await this.util.sleep(1000);
+        }
+      }
+    }
+
+    console.log('stock split check completed');
+  }
 }

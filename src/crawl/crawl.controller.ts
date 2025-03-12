@@ -30,12 +30,7 @@ export class CrawlController {
       hyphenDate = now.format('YYYY-MM-DD');
     }
 
-    await Promise.all([
-      this.crawlOhlcv.updateOhlcvByDate(hyphenDate),
-      this.crawlDividend.updateDailyDividendData(hyphenDate),
-      this.crawlForeignOwn.updateForeignOwnByDate(hyphenDate),
-    ]);
-    return true;
+    return this.crawlService.crawlDaily(hyphenDate);
   }
 
   @Post('/basic-info')

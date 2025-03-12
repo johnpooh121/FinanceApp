@@ -111,7 +111,6 @@ export class CrawlOhlcvService {
         this.util.getISINMap(),
       ]);
       await this.dbUpdateForDailyData(rawData, hyphenDate, isinMap);
-      await this.checkForStockSplit();
     } catch (e) {
       console.log('error while collecting date by date : ', hyphenDate);
       console.log(e);
@@ -199,45 +198,5 @@ export class CrawlOhlcvService {
       entity = await this.stockInfoRepository.findOneBy({ code, marketType });
     console.log('update target : ', entity);
     await this.updateOhlcvByInfo(entity);
-  }
-
-  async checkForStockSplit() {
-    const dateList = (
-      await this.stockRepository
-        .createQueryBuilder('st')
-        .select('date')
-        .groupBy('date')
-        .orderBy('date', 'DESC')
-        .getRawMany()
-    ).map(({ date }) => date);
-
-    if (dateList.length < 2) return;
-    const [currStockList, prevStockList, infoMap] = await Promise.all([
-      this.stockRepository.find({ where: { date: dateList[0] } }),
-      this.stockRepository.find({ where: { date: dateList[1] } }),
-      this.util.getInfoMap(),
-    ]);
-
-    const prevStockMap = new Map(
-      prevStockList.map((stock) => [stock.isin, stock]),
-    );
-
-    await Promise.all(
-      currStockList.map((stock) => {
-        const prevStock = prevStockMap.get(stock.isin);
-        if (!prevStock) return;
-        if (prevStock.adjClose + stock.change !== stock.adjClose) {
-          console.log(
-            'stock split detected, key : ',
-            stock.isin,
-            ' name : ',
-            stock.name,
-          );
-          const targetInfo = infoMap.get(stock.isin);
-          if (targetInfo) return this.updateOhlcvByInfo(targetInfo);
-        }
-      }),
-    );
-    console.log('stock split check completed');
   }
 }
