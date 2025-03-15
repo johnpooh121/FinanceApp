@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>KakaoTalk Login</title>
+    <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      #login-btn {
+        background-color: #fee500;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      #login-btn img {
+        height: 20px;
+        vertical-align: middle;
+        margin-right: 5px;
+      }
+      #profile {
+        margin-top: 20px;
+        display: none;
+      }
+      #profile img {
+        border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>KakaoTalk Login</h2>
+    <button id="login-btn">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/8/82/KakaoTalk_logo.svg"
+        alt="Kakao"
+      />
+      Login with Kakao
+    </button>
+
+    <div id="profile">
+      <h3>Welcome, <span id="nickname"></span></h3>
+      <img id="profile-img" src="" alt="Profile Image" width="100" />
+      <p><button onclick="logout()">Logout</button></p>
+    </div>
+
+    <script>
+      // Initialize Kakao SDK
+      Kakao.init('{{clientId}}'); // Replace with your actual JavaScript Key
+      console.log("Kakao SDK initialized:", Kakao.isInitialized());
+
+      // Login function
+      document
+        .getElementById("login-btn")
+        .addEventListener("click", function () {
+          Kakao.Auth.login({
+            redirectUri : '{{redirectUri}}',
+            success: function (authObj) {
+              console.log("Access Token:", authObj.access_token);
+              getUserInfo();
+            },
+            fail: function (err) {
+              console.error("Login Failed:", err);
+            },
+          });
+        });
+
+      // Fetch user profile
+      function getUserInfo() {
+        Kakao.API.request({
+          url: "/v2/user/me",
+          success: function (response) {
+            console.log("User Info:", response);
+            document.getElementById("nickname").innerText =
+              response.kakao_account.profile.nickname;
+            document.getElementById("profile-img").src =
+              response.kakao_account.profile.profile_image_url;
+            document.getElementById("profile").style.display = "block";
+            document.getElementById("login-btn").style.display = "none";
+          },
+          fail: function (error) {
+            console.error("Failed to fetch user info:", error);
+          },
+        });
+      }
+
+      // Logout function
+      function logout() {
+        Kakao.Auth.logout(function () {
+          alert("Logged out successfully");
+          document.getElementById("profile").style.display = "none";
+          document.getElementById("login-btn").style.display = "block";
+        });
+      }
+    </script>
+  </body>
+</html>
