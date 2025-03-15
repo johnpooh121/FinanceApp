@@ -3,11 +3,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import 'reflect-metadata';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CrawlModule } from './crawl/crawl.module';
-import { UtilModule } from './util/util.module';
 import { AuthModule } from './auth/auth.module';
-import { WebModule } from './web/web.module';
+import { CrawlModule } from './crawl/crawl.module';
 import { UserModule } from './user/user.module';
+import { UtilModule } from './util/util.module';
+import { WebModule } from './web/web.module';
 
 @Module({
   imports: [

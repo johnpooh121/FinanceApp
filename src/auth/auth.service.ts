@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import {
   ACCESS_TOKEN_SECRET,
+  BEARER_TOKEN_SECRET,
   KAKAO_API_KEY,
   KAKAO_REDIRECT_URI,
   MAX_USER_COUNT,
@@ -54,10 +55,30 @@ export class AuthService {
     return this.issueRefreshToken(sub);
   }
 
+  async verifyAndRefresh(oldRefreshToken: string) {
+    const { id } = this.jwtService.verify(oldRefreshToken, {
+      secret: REFRESH_TOKEN_SECRET,
+    });
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) throw new NotFoundException();
+    return {
+      accessToken: this.issueAccessToken(id),
+      refreshToken: this.issueRefreshToken(id),
+      bearerToken: this.issueBearerToken(id),
+    };
+  }
+
   issueAccessToken(id: string) {
     return this.jwtService.sign(
       { id },
       { secret: ACCESS_TOKEN_SECRET, expiresIn: 60 * 10 },
+    );
+  }
+
+  issueBearerToken(id: string) {
+    return this.jwtService.sign(
+      { id },
+      { secret: BEARER_TOKEN_SECRET, expiresIn: 60 * 10 },
     );
   }
 

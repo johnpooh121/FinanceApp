@@ -1,5 +1,15 @@
-import { Controller, Get, Query, Redirect, Res } from '@nestjs/common';
-import { Response } from 'express';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Redirect,
+  Req,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
+import { CookieOptions, Request, Response } from 'express';
 import { MY_HOST } from 'src/common/constant';
 import { AuthService } from './auth.service';
 
@@ -7,15 +17,53 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  defaultCookieOptions: CookieOptions = {
+    httpOnly: true,
+    sameSite: 'strict',
+    domain: process.env.IS_LOCAL === 'true' ? undefined : MY_HOST,
+  };
+
   @Get('/kakao/callback')
+  @ApiOperation({ description: '카카오 로그인 callback api' })
   @Redirect()
   async kakaoCallback(
     @Query('code') code,
-    @Res({ passthrough: true }) response: Response,
+    @Res({ passthrough: true }) res: Response,
   ) {
     const refreshToken = await this.authService.kakaoCallback(code);
-    response.cookie('finance-app-refresh-token', refreshToken);
+    res.cookie(
+      'finance-app-refresh-token',
+      refreshToken,
+      this.defaultCookieOptions,
+    );
 
     return { url: `http://${MY_HOST}/web/mypage`, status: 302 };
+  }
+
+  @Post('/refresh')
+  @ApiOperation({ description: 'refresh api (refresh token 필요)' })
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      const oldRefreshToken = req.cookies['finance-app-refresh-token'];
+      const { accessToken, refreshToken, bearerToken } =
+        await this.authService.verifyAndRefresh(oldRefreshToken);
+      res.cookie(
+        'finance-app-access-token',
+        accessToken,
+        this.defaultCookieOptions,
+      );
+      res.cookie(
+        'finance-app-refresh-token',
+        refreshToken,
+        this.defaultCookieOptions,
+      );
+      return bearerToken;
+    } catch (e) {
+      console.log(e);
+      throw new UnauthorizedException();
+    }
   }
 }

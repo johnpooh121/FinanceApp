@@ -1,4 +1,4 @@
-<html></html>
+<html>
   <head>
     <meta charset='utf-8' />
     <title>My Page</title>
@@ -6,6 +6,30 @@
   <body>
     Hi, this is my page.
     {{message}}
+    <p>
+      <button type='button' id='refresh'>새로 고침</button>
+    </p>
+
+    <div>
+      <h2>유저 정보 </h2>
+      회원가입 시각 :
+      <span id='user-createdAt'></span>
+      <br />
+      최근 유저정보 업데이트 시각 :
+      <span id='user-updatedAt'></span>
+      <br />
+      등록 이메일 :
+      <span id='user-email'></span>
+      <form name = 'form-email' action="#" id="form-update-email">
+        <label>Email Edit:
+          <input name='submitted-email' />
+        </label>
+        <button>Save</button>
+      </form>
+      <button type='button' id='delete-email'>등록된 이메일 삭제</button>
+
+    </div>
+    <script src='/scripts/mypage.js' type='module'></script>
   </body>
-  
+
 </html>

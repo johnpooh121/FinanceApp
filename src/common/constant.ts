@@ -8,6 +8,8 @@ export const KAKAO_REDIRECT_URI = `http://${process.env.MY_HOST}/auth/kakao/call
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 
+export const BEARER_TOKEN_SECRET = process.env.BEARER_TOKEN_SECRET as string;
+
 export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
 
 export const MAX_USER_COUNT = 100;
