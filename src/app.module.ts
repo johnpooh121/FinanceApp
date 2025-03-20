@@ -8,6 +8,7 @@ import { CrawlModule } from './crawl/crawl.module';
 import { UserModule } from './user/user.module';
 import { UtilModule } from './util/util.module';
 import { WebModule } from './web/web.module';
+import { DataModule } from './data/data.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { WebModule } from './web/web.module';
     AuthModule,
     WebModule,
     UserModule,
+    DataModule,
   ],
   controllers: [AppController],
   providers: [AppService],

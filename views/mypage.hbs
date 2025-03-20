@@ -29,6 +29,16 @@
       <button type='button' id='delete-email'>등록된 이메일 삭제</button>
 
     </div>
+    <div>
+      <h2>데이터 다운로드</h2>
+      <form id="form-data-query" method="post" action="/data/query/csv">
+        <label>쿼리 기간 시작일: <input name="startDate" id="input-startDate" type="date"></label> <br>
+        <label>쿼리 기간 종료일: <input name="endDate" id="input-endDate" type="date"></label> <br>
+        <label>쿼리 종목 코드 리스트  <br> ( 각 줄에 하나씩 입력 )  <textarea name="codes" id="input-codes" cols="40" rows="7">005930&#13;&#10;000660</textarea> </label> <br> <br>
+        <label>모든 종목을 쿼리할지 여부 (체크 시 위의 리스트는 무시됨) : <input name="isAllIssue" id="input-isAllIssue" type="checkbox"></label><br>
+        <button type='button' id='download'>다운로드</button>
+      </form>
+    </div>
     <script src='/scripts/mypage.js' type='module'></script>
   </body>
 
