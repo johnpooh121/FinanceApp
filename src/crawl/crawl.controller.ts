@@ -1,6 +1,7 @@
-import { Controller, Post, Query } from '@nestjs/common';
+import { Controller, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import moment from 'moment-timezone';
+import { AdminGuard } from 'src/common/guards/admin.guard';
 import { CrawlService } from './crawl.service';
 import { DailyCrawlQueryRequest } from './dtos/daily-crawl-query.request';
 import { IndividualCrawlQueryRequest } from './dtos/individual-crawl-query.request';
@@ -10,6 +11,7 @@ import { CrawlInfoService } from './services/crawl-info.service';
 import { CrawlOhlcvService } from './services/crawl-ohlcv.service';
 
 @Controller('crawl')
+@UseGuards(AdminGuard)
 export class CrawlController {
   constructor(
     private readonly crawlService: CrawlService,

@@ -13,6 +13,12 @@ async function bootstrap() {
     .setTitle('Finance App API Reference')
     .setDescription('api reference')
     .setVersion('1.0')
+    .addBearerAuth()
+    .addApiKey(
+      { type: 'apiKey', in: 'header', name: 'admin-api-auth' },
+      'admin',
+    )
+    .addSecurityRequirements('admin')
     .build();
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
