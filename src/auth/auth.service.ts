@@ -8,6 +8,7 @@ import {
   KAKAO_API_KEY,
   KAKAO_REDIRECT_URI,
   MAX_USER_COUNT,
+  MONTHLY_QUOTA,
   REFRESH_TOKEN_SECRET,
 } from 'src/common/constant';
 import { UserEntity } from 'src/entities/user.entity';
@@ -46,7 +47,10 @@ export class AuthService {
       throw new NotFoundException('신규 가입이 불가능합니다');
 
     if (!user) {
-      await this.userRepository.insert({ id: sub });
+      await this.userRepository.insert({
+        id: sub,
+        quota: MONTHLY_QUOTA,
+      });
       console.log('new user registered, id : ', sub);
     } else {
       await this.userRepository.update({ id: sub }, { lastLogin: new Date() });

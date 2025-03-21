@@ -8,6 +8,9 @@ export class UserEntity extends BaseEntity {
   @Column({ length: 128, nullable: true, type: 'varchar' })
   email: string | null;
 
+  @Column({ type: 'int' })
+  quota: number;
+
   @Column({
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',

@@ -12,6 +12,8 @@ export const BEARER_TOKEN_SECRET = process.env.BEARER_TOKEN_SECRET as string;
 
 export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET as string;
 
+export const MONTHLY_QUOTA = 4000000;
+
 export const MAX_USER_COUNT = 100;
 
 export const COLUMN_MAP = {

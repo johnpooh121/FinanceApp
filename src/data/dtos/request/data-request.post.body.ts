@@ -13,6 +13,6 @@ export class DataRequestPostBody {
   })
   codes: string;
 
-  @ApiPropertyOptional({ description: '전체 종목 조회인지', example: 'true' })
-  isAllIssue: 'true';
+  @ApiPropertyOptional({ description: '전체 종목 조회인지', example: 'on' })
+  isAllIssue: 'on';
 }
