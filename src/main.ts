@@ -3,6 +3,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
+import expressBasicAuth from 'express-basic-auth';
 import { join } from 'path';
 import { AppModule } from './app.module';
 
@@ -25,6 +26,15 @@ async function bootstrap() {
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   app.setViewEngine('hbs');
   app.use(cookieParser());
+  app.use(
+    '/api',
+    expressBasicAuth({
+      users: {
+        [process.env.SWAGGER_ID as string]: process.env.SWAGGER_PW as string,
+      },
+      challenge: true,
+    }),
+  );
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
