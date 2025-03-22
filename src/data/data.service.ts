@@ -56,6 +56,7 @@ export class DataService {
       .map((str) => `"${str}"`)
       .join(',')
       .concat('\n');
+    res.write('\ufeff');
     res.write(csvTopHeader);
 
     dbStream.on('readable', () => {
