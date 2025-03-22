@@ -11,6 +11,7 @@ export class UserGuard implements CanActivate {
       const accessTokenCookie = req.cookies['finance-app-access-token'];
       const bearerToken =
         req.headers['authorization'] || req.body?.['authorization'];
+      console.log(req.headers, req.body);
       this.jwtService.verify(accessTokenCookie, {
         secret: ACCESS_TOKEN_SECRET,
       });
