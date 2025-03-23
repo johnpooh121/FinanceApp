@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { UtilModule } from './util/util.module';
 import { WebModule } from './web/web.module';
 import { DataModule } from './data/data.module';
+import { CronModule } from './cron/cron.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { DataModule } from './data/data.module';
     WebModule,
     UserModule,
     DataModule,
+    CronModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,0 +1,13 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MetadataEntity } from 'src/entities/metadata.entity';
+import { UserEntity } from 'src/entities/user.entity';
+import { CronController } from './cron.controller';
+import { CronService } from './cron.service';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([UserEntity, MetadataEntity])],
+  controllers: [CronController],
+  providers: [CronService],
+})
+export class CronModule {}

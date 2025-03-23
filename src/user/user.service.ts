@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { MONTHLY_QUOTA } from 'src/common/constant';
 import { UserEntity } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 import { PatchUserBody } from './dtos/patch-user.body';
@@ -19,9 +18,5 @@ export class UserService {
   async editUser(id: string, body: PatchUserBody) {
     const { email } = body;
     return this.userRepository.update({ id }, { email, updatedAt: new Date() });
-  }
-
-  async resetUserQuota() {
-    await this.userRepository.update({}, { quota: MONTHLY_QUOTA });
   }
 }
