@@ -16,7 +16,10 @@ export class UserService {
   }
 
   async editUser(id: string, body: PatchUserBody) {
-    const { email } = body;
-    return this.userRepository.update({ id }, { email, updatedAt: new Date() });
+    const { email, sub, criteria } = body;
+    return this.userRepository.update(
+      { id },
+      { email, updatedAt: new Date(), sub, criteria },
+    );
   }
 }

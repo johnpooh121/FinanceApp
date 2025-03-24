@@ -1,3 +1,15 @@
+const idList = [
+  'minMarketCap',
+  'maxMarketCap',
+  'minPer',
+  'maxPer',
+  'minPbr',
+  'maxPbr',
+  'minDy',
+  'vsLowPrice',
+  'vsHighPrice',
+];
+
 const refreshSession = async () => {
   const res = await fetch('/auth/refresh', {
     method: 'POST',
@@ -28,6 +40,44 @@ const getUserInfo = async () => {
   document.getElementById('user-createdAt').textContent = user.createdAt;
   document.getElementById('user-updatedAt').textContent = user.updatedAt;
   document.getElementById('user-quota').textContent = user.quota;
+  document.getElementById('user-sub').textContent =
+    user.sub === 1 ? '활성화' : '비활성화';
+  if (user.criteria) {
+    const texts = [];
+    const {
+      minMarketCap,
+      maxMarketCap,
+      minPer,
+      maxPer,
+      minPbr,
+      maxPbr,
+      minDy,
+      vsLowPrice,
+      vsHighPrice,
+    } = user.criteria;
+    if (minMarketCap || maxMarketCap)
+      texts.push(
+        `시가총액 ${minMarketCap ? `${minMarketCap}원 이상, ` : ''} ${maxMarketCap ? `${maxMarketCap원} 이하` : ''}`,
+      );
+    if (minPer || maxPer)
+      texts.push(
+        `PER ${minPer ? `${minPer} 이상, ` : ''} ${maxPer ? `${maxPer} 이하` : ''}`,
+      );
+    if (minPbr || maxPbr)
+      texts.push(
+        `PBR ${minPbr ? `${minPbr} 이상, ` : ''} ${maxPbr ? `${maxPbr} 이하` : ''}`,
+      );
+    if (minDy) texts.push(`배당이익률 ${minDy} 이상`);
+    if (vsLowPrice) texts.push(`52주 저점 대비 상승률 ${vsLowPrice}% 이하`);
+    if (vsHighPrice) texts.push(`52주 고점 대비 하락률 ${vsHighPrice}% 이상`);
+    document.getElementById('user-criteria').innerHTML =
+      `<br>${texts.map((row) => `&emsp;- ${row}`).join('<br>')}`;
+    idList.forEach((id) => {
+      if (user.criteria[id])
+        document.getElementById(`input-${id}`).value = user.criteria[id];
+    });
+  }
+  document.getElementById('checkbox-sub').checked = user.sub == 1;
 };
 
 const refresh = async () => {
@@ -42,7 +92,7 @@ const editUser = async (data) => {
       authorization: window.localStorage.getItem('bearer'),
       'Content-Type': 'application/json',
     },
-    method: 'POST',
+    method: 'PATCH',
     body: JSON.stringify(data),
   });
 };
@@ -72,6 +122,33 @@ const downloadData = async () => {
   setTimeout(refresh, 3000);
 };
 
+const updateUserCriteria = async () => {
+  const criteria = {};
+  idList.forEach((id) => {
+    const v = document.getElementById(`input-${id}`).value;
+    if (v) criteria[id] = v;
+  });
+  const sub = document.getElementById('checkbox-sub').checked;
+  await editUser({ criteria, sub });
+  refresh();
+};
+
+const getRecommendData = async () => {
+  const criteria = {};
+  idList.forEach((id) => {
+    const v = document.getElementById(`input-${id}`).value;
+    if (v) criteria[id] = v;
+  });
+  await fetch('/data/recommend', {
+    headers: {
+      authorization: window.localStorage.getItem('bearer'),
+      'Content-Type': 'application/json',
+    },
+    method: 'POST',
+    body: JSON.stringify(criteria),
+  });
+};
+
 refresh();
 
 document.getElementById('refresh').addEventListener('click', refresh);
@@ -87,3 +164,7 @@ document.getElementById('input-endDate').value = new Date()
   .toISOString()
   .slice(0, 10);
 const hiddenField = document.createElement('input');
+document.getElementById('apply').addEventListener('click', updateUserCriteria);
+document
+  .getElementById('testQuery')
+  .addEventListener('click', getRecommendData);

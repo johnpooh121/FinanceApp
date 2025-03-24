@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Response } from 'express';
 import moment from 'moment-timezone';
 import { COLUMN_MAP } from 'src/common/constant';
+import { DataCriteriaDTO } from 'src/common/dtos/data-criteria.dto';
 import { KorStockEntity } from 'src/entities/KorStock.entity';
 import { KorStockInfoEntity } from 'src/entities/KorStockInfo.entity';
 import { UserEntity } from 'src/entities/user.entity';
@@ -80,5 +81,52 @@ export class DataService {
         .execute();
       res.end();
     });
+  }
+
+  async getRecommend(body: DataCriteriaDTO, userId: string) {
+    const { maxPbr, maxPer, minDy, minPbr, minPer, vsHighPrice, vsLowPrice } =
+      body;
+    const { date: latestWorkDay } = await this.stockRepository.findOneOrFail({
+      where: {},
+      order: { date: 'desc' },
+    });
+    const aYearAgo = moment
+      .utc(latestWorkDay)
+      .subtract({ year: 1 })
+      .format('YYYY-MM-DD');
+
+    const whereQuery: string[] = [];
+    if (maxPbr) whereQuery.push(`(pbr <= ${maxPbr})`);
+    if (minPbr) whereQuery.push(`(pbr >= ${minPbr})`);
+    if (maxPer) whereQuery.push(`(per <= ${maxPer})`);
+    if (minPer) whereQuery.push(`(per >= ${minPer})`);
+    if (minDy) whereQuery.push(`(dy >= ${minDy})`);
+    if (vsHighPrice)
+      whereQuery.push(
+        `((yearMaxPrice-adjClose) >= ${vsHighPrice} * yearMaxPrice)`,
+      );
+    if (vsLowPrice)
+      whereQuery.push(
+        `((adjClose-yearMinPrice) <= ${vsLowPrice} * yearMinPrice)`,
+      );
+    console.log(body);
+    console.log(whereQuery);
+
+    const res = await this.stockRepository.manager.query(
+      `
+      SELECT * FROM 
+        (select * from korstock where date = ?) k
+      LEFT JOIN
+        (SELECT MIN(adjClose) yearLowPrice, MAX(adjClose) yearMaxPrice, isin from korStock 
+        where date >= ? and date <= ? 
+        group by isin) k2 on k.isin=k2.isin
+      ${whereQuery.length > 0 ? `WHERE ${whereQuery.join(' AND ')}` : ''}
+      order by marketCap desc
+      limit 20
+      `,
+      [latestWorkDay, aYearAgo, latestWorkDay],
+    );
+    console.log(res);
+    return res;
   }
 }

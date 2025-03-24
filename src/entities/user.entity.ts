@@ -18,6 +18,18 @@ export class UserEntity extends BaseEntity {
   lastLogin: Date;
 
   @Column({
+    type: 'tinyint',
+    default: false,
+  })
+  sub: boolean;
+
+  @Column({
+    type: 'json',
+    nullable: true,
+  })
+  criteria: object;
+
+  @Column({
     type: 'datetime',
     default: () => 'CURRENT_TIMESTAMP',
   })

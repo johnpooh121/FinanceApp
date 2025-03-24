@@ -2,7 +2,9 @@ import { Body, Controller, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UserId } from 'src/common/decorators/user.decorator';
+import { DataCriteriaDTO } from 'src/common/dtos/data-criteria.dto';
 import { UserGuard } from 'src/common/guards/user.guard';
+import { KorStockEntity } from 'src/entities/KorStock.entity';
 import { DataService } from './data.service';
 import { DataRequestPostBody } from './dtos/request/data-request.post.body';
 
@@ -19,5 +21,14 @@ export class DataController {
     @Res() res: Response,
   ) {
     return this.dataService.getCSV(body, userId, res);
+  }
+
+  @Post('/recommend')
+  @ApiOperation({ summary: '조건에 맞는 종목 출력' })
+  async getRecommend(
+    @Body() body: DataCriteriaDTO,
+    @UserId() userId: string,
+  ): Promise<KorStockEntity[]> {
+    return this.dataService.getRecommend(body, userId);
   }
 }
