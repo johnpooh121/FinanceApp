@@ -48,7 +48,8 @@ export class CrawlForeignOwnService {
       .forEach((rowString) => {
         const modifiedRowString = rowString
           .replace(/,,/g, ',"",')
-          .replace(/,,/g, ',"",');
+          .replace(/,,/g, ',"",')
+          .concat('"');
         const entries = modifiedRowString
           .split('","')
           .map((str) => str.replace(/"/g, ''));
@@ -64,7 +65,8 @@ export class CrawlForeignOwnService {
         .map((rowString) => {
           const modifiedRowString = rowString
             .replace(/,,/g, ',"",')
-            .replace(/,,/g, ',"",');
+            .replace(/,,/g, ',"",')
+            .concat('"');
           const entries = modifiedRowString
             .split('","')
             .map((str) => str.replace(/"/g, ''));
@@ -128,7 +130,8 @@ export class CrawlForeignOwnService {
           .map((rowString) => {
             const modifiedRowString = rowString
               .replace(/,,/g, ',"",')
-              .replace(/,,/g, ',"",');
+              .replace(/,,/g, ',"",')
+              .concat('"');
             const entries = modifiedRowString
               .split('","')
               .map((str) => str.replace(/"/g, ''));

@@ -40,7 +40,8 @@ export class CrawlInfoService implements OnModuleInit {
           .map((rowString) => {
             const modifiedRowString = rowString
               .replace(/,,/g, ',"",')
-              .replace(/,,/g, ',"",');
+              .replace(/,,/g, ',"",')
+              .concat('"');
             const entries = modifiedRowString
               .split('","')
               .map((str) => str.replace(/"/g, ''));
