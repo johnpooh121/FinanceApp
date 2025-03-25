@@ -160,4 +160,10 @@ export class CrawlForeignOwnService {
     }
     return true;
   }
+
+  async updateForeignOwnByCode(code: string) {
+    const entity = await this.stockInfoRepository.findOneByOrFail({ code });
+    console.log('update target : ', entity);
+    await this.updateForeignOwnByInfo(entity);
+  }
 }

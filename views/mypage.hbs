@@ -56,7 +56,12 @@
       <label>52주 저점 대비 상승률<input id="input-vsLowPrice" type="number">% 이하</label><br>
       
       <button type='button' id='apply'>적용</button> <br><br>
-      <button type='button' id='testQuery'>위 조건에 해당하는 현재 종목들 가져오기</button>
+      <button type='button' id='testQuery'>현재 기준 위 조건에 해당하는 종목들 가져오기</button>
+      <table id="table" border="1">
+        <thead><td>종목코드</td><td>종목명</td><td>전일 종가</td><td>52주 최고가</td><td>52주 최저가</td><td>시가총액</td><td>PER</td><td>PBR</td><td>배당수익률</td><td>외국인지분율</td>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
     </div>
     <script src='/scripts/mypage.js' type='module'></script>
   </body>

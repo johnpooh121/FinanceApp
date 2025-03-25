@@ -83,10 +83,10 @@ export class CrawlDividendService {
             changeRate: Number(entries[4]),
             eps: entries[5] ? Number(entries[5]) : null,
             per: entries[6] ? Number(entries[6]) : null,
-            bps: entries[8] ? Number(entries[8]) : null,
-            pbr: entries[9] ? Number(entries[9]) : null,
-            dps: entries[10] ? Number(entries[10]) : null,
-            dy: entries[11] ? Number(entries[11]) : null,
+            bps: entries[9] ? Number(entries[9]) : null,
+            pbr: entries[10] ? Number(entries[10]) : null,
+            dps: entries[11] ? Number(entries[11]) : null,
+            dy: entries[12] ? Number(entries[12]) : null,
             updatedAt: current,
           };
         })
@@ -147,10 +147,10 @@ export class CrawlDividendService {
               changeRate: Number(entries[3]),
               eps: entries[4] ? Number(entries[4]) : null,
               per: entries[5] ? Number(entries[5]) : null,
-              bps: entries[6] ? Number(entries[6]) : null,
-              pbr: entries[7] ? Number(entries[7]) : null,
-              dps: entries[8] ? Number(entries[8]) : null,
-              dy: entries[9] ? Number(entries[9]) : null,
+              bps: entries[8] ? Number(entries[8]) : null,
+              pbr: entries[9] ? Number(entries[9]) : null,
+              dps: entries[10] ? Number(entries[10]) : null,
+              dy: entries[11] ? Number(entries[11]) : null,
               updatedAt: current,
             };
           })
@@ -164,5 +164,11 @@ export class CrawlDividendService {
       return false;
     }
     return true;
+  }
+
+  async updateDividendDataByCode(code: string) {
+    const entity = await this.stockInfoRepository.findOneByOrFail({ code });
+    console.log('update target : ', entity);
+    await this.updateDividendDataByInfo(entity);
   }
 }

@@ -191,11 +191,8 @@ export class CrawlOhlcvService {
   }
 
   async updateOhlcvByCode(query: IndividualCrawlQueryRequest) {
-    const { isin, code, marketType } = query;
-    let entity;
-    if (isin) entity = await this.stockInfoRepository.findOneBy({ isin });
-    else
-      entity = await this.stockInfoRepository.findOneBy({ code, marketType });
+    const { code } = query;
+    const entity = await this.stockInfoRepository.findOneByOrFail({ code });
     console.log('update target : ', entity);
     await this.updateOhlcvByInfo(entity);
   }

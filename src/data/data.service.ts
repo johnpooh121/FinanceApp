@@ -103,21 +103,20 @@ export class DataService {
     if (minDy) whereQuery.push(`(dy >= ${minDy})`);
     if (vsHighPrice)
       whereQuery.push(
-        `((yearMaxPrice-adjClose) >= ${vsHighPrice} * yearMaxPrice)`,
+        `((yearMaxPrice-adjClose) >= ${vsHighPrice}/100 * yearMaxPrice)`,
       );
     if (vsLowPrice)
       whereQuery.push(
-        `((adjClose-yearMinPrice) <= ${vsLowPrice} * yearMinPrice)`,
+        `((adjClose-yearMinPrice) <= ${vsLowPrice}/100 * yearMinPrice)`,
       );
-    console.log(body);
-    console.log(whereQuery);
+    // console.log(whereQuery);
 
     const res = await this.stockRepository.manager.query(
       `
       SELECT * FROM 
         (select * from korstock where date = ?) k
       LEFT JOIN
-        (SELECT MIN(adjClose) yearLowPrice, MAX(adjClose) yearMaxPrice, isin from korStock 
+        (SELECT MIN(adjClose) yearMinPrice, MAX(adjClose) yearMaxPrice, isin from korStock 
         where date >= ? and date <= ? 
         group by isin) k2 on k.isin=k2.isin
       ${whereQuery.length > 0 ? `WHERE ${whereQuery.join(' AND ')}` : ''}
@@ -126,7 +125,6 @@ export class DataService {
       `,
       [latestWorkDay, aYearAgo, latestWorkDay],
     );
-    console.log(res);
     return res;
   }
 }

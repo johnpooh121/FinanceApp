@@ -139,7 +139,7 @@ const getRecommendData = async () => {
     const v = document.getElementById(`input-${id}`).value;
     if (v) criteria[id] = v;
   });
-  await fetch('/data/recommend', {
+  const req = await fetch('/data/recommend', {
     headers: {
       authorization: window.localStorage.getItem('bearer'),
       'Content-Type': 'application/json',
@@ -147,6 +147,25 @@ const getRecommendData = async () => {
     method: 'POST',
     body: JSON.stringify(criteria),
   });
+  const list = await req.json();
+  tableBody.innerHTML = '';
+  list.map(
+    ({
+      code,
+      name,
+      adjClose,
+      marketCap,
+      per,
+      pbr,
+      dy,
+      yearMinPrice,
+      yearMaxPrice,
+      foreignOwnRate,
+    }) => {
+      const nr = tableBody.insertRow();
+      nr.innerHTML = `<td>${code}</td><td>${name}</td><td>${adjClose}</td><td>${yearMaxPrice}</td><td>${yearMinPrice}</td><td>${marketCap}</td><td>${per}</td><td>${pbr}</td><td>${dy}</td><td>${foreignOwnRate}</td>`;
+    },
+  );
 };
 
 refresh();
@@ -168,3 +187,5 @@ document.getElementById('apply').addEventListener('click', updateUserCriteria);
 document
   .getElementById('testQuery')
   .addEventListener('click', getRecommendData);
+const table = document.getElementById('table');
+const tableBody = document.getElementById('table-body');

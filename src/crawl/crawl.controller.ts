@@ -32,6 +32,16 @@ export class CrawlController {
       hyphenDate = now.format('YYYY-MM-DD');
     }
 
+    // const curr = moment.utc();
+    // for (let i = 0; i < 300; i++) {
+    //   try {
+    //     await this.crawlService.crawlDaily(curr.format('YYYY-MM-DD'));
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    //   curr.subtract({ day: 1 });
+    // }
+
     return this.crawlService.crawlDaily(hyphenDate);
   }
 
@@ -44,7 +54,9 @@ export class CrawlController {
   @Post('/individual')
   @ApiOperation({ summary: '개별 종목 데이터 크롤링' })
   async updateIndividualStock(@Query() query: IndividualCrawlQueryRequest) {
-    return this.crawlOhlcv.updateOhlcvByCode(query);
+    await this.crawlOhlcv.updateOhlcvByCode(query);
+    await this.crawlDividend.updateDividendDataByCode(query.code);
+    await this.crawlForeignOwn.updateForeignOwnByCode(query.code);
   }
 
   @Post('/init')
