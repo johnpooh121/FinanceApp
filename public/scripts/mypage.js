@@ -67,7 +67,7 @@ const getUserInfo = async () => {
       texts.push(
         `PBR ${minPbr ? `${minPbr} 이상, ` : ''} ${maxPbr ? `${maxPbr} 이하` : ''}`,
       );
-    if (minDy) texts.push(`배당이익률 ${minDy} 이상`);
+    if (minDy) texts.push(`배당수익률 ${minDy}% 이상`);
     if (vsLowPrice) texts.push(`52주 저점 대비 상승률 ${vsLowPrice}% 이하`);
     if (vsHighPrice) texts.push(`52주 고점 대비 하락률 ${vsHighPrice}% 이상`);
     document.getElementById('user-criteria').innerHTML =
