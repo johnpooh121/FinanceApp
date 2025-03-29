@@ -30,6 +30,12 @@ export class KorStockEntity extends BaseEntity {
   @Column({ type: 'int', unsigned: true, nullable: true })
   highPrice: number | null;
 
+  @Column({ type: 'int', unsigned: true, nullable: true })
+  yearMinPrice: number | null;
+
+  @Column({ type: 'int', unsigned: true, nullable: true })
+  yearMaxPrice: number | null;
+
   @Column({ unsigned: false })
   change: number;
 

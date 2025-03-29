@@ -47,7 +47,7 @@ export class CrawlService {
     console.log('db initialize completed');
   }
 
-  async crawlDaily(hyphenDate) {
+  async crawlDaily(hyphenDate: string) {
     const codeMap = await this.util.getCodeMap();
     try {
       const info = codeMap.get('005930');
@@ -60,10 +60,10 @@ export class CrawlService {
       this.crawlDividend.updateDailyDividendData(hyphenDate),
       this.crawlForeignOwn.updateForeignOwnByDate(hyphenDate),
     ]);
-    await this.checkForStockSplit();
   }
 
   async checkForStockSplit() {
+    console.log('checking for stock split...');
     const dateList = (
       await this.stockRepository
         .createQueryBuilder('st')
@@ -86,7 +86,7 @@ export class CrawlService {
 
     for (const stock of currStockList) {
       const prevStock = prevStockMap.get(stock.isin);
-      if (!prevStock) return;
+      if (!prevStock) continue;
       if (prevStock.adjClose + stock.change !== stock.adjClose) {
         console.log(
           'stock split detected, key : ',

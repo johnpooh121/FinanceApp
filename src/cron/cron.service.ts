@@ -191,4 +191,8 @@ export class CronService {
     });
     console.log('gmail.send result : ', res.data);
   }
+
+  async updateAccInfo() {
+    await this.dataService.updateAccumulativeProperty();
+  }
 }

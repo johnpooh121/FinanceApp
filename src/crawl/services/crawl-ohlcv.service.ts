@@ -199,4 +199,31 @@ export class CrawlOhlcvService {
     console.log('update target : ', entity);
     await this.updateOhlcvByInfo(entity);
   }
+
+  async updateAccPropForADay(date: string) {
+    console.log('updating yearMaxPrice, yearMinPrice');
+    console.time('updating acc');
+    const aYearAgo = moment
+      .utc(date)
+      .subtract({ year: 1 })
+      .format('YYYY-MM-DD');
+    const res: { isin: string; yearMinPrice: number; yearMaxPrice: number }[] =
+      await this.stockRepository.manager.query(
+        `
+      SELECT MIN(adjClose) yearMinPrice, MAX(adjClose) yearMaxPrice, isin from KorStock
+      where date >= ? and date <= ?
+      group by isin
+      `,
+        [aYearAgo, date],
+      );
+    await Promise.all(
+      res.map(({ isin, yearMinPrice, yearMaxPrice }) =>
+        this.stockRepository.update(
+          { isin, date },
+          { yearMaxPrice, yearMinPrice },
+        ),
+      ),
+    );
+    console.timeEnd('updating acc');
+  }
 }

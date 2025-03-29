@@ -19,4 +19,10 @@ export class CronController {
   async sendEmail() {
     return this.cronService.sendEmail();
   }
+
+  @Post('/data/update-acc-properties')
+  @ApiOperation({ description: '누적되는 속성들 업데이트' })
+  async updateAccProperties() {
+    return this.cronService.updateAccInfo();
+  }
 }

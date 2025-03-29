@@ -1,5 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import Denque from 'denque';
 import { Response } from 'express';
 import moment from 'moment-timezone';
 import { COLUMN_MAP } from 'src/common/constant';
@@ -126,5 +127,74 @@ export class DataService {
       [latestWorkDay, aYearAgo, latestWorkDay],
     );
     return res;
+  }
+
+  async updateAccumulativeProperty() {
+    const infoList = (await this.util.getInfoMap()).values();
+    let promiseList: Promise<any>[] = [];
+    const clearPromiseList = async () => {
+      if (promiseList.length > 200) {
+        await Promise.all(promiseList);
+        promiseList = [];
+      }
+    };
+    for (const stock of infoList) {
+      console.log('updateing stock ', stock.code, stock.korNameShorten);
+      const { isin } = stock;
+      const dataList = await this.stockRepository.find({
+        where: { isin },
+        order: { date: 'ASC' },
+      });
+      const minDeque = new Denque<{ date: string; adjClose: number }>();
+      const maxDeque = new Denque<{ date: string; adjClose: number }>();
+
+      for (const { date, adjClose } of dataList) {
+        while (
+          !minDeque.isEmpty() &&
+          moment
+            .utc(minDeque.peekFront()?.date)
+            .add({ year: 1 })
+            .format('YYYY-MM-DD') < date
+        )
+          minDeque.shift();
+
+        while (
+          !maxDeque.isEmpty() &&
+          moment
+            .utc(maxDeque.peekFront()?.date)
+            .add({ year: 1 })
+            .format('YYYY-MM-DD') < date
+        )
+          maxDeque.shift();
+
+        while (
+          !minDeque.isEmpty() &&
+          (minDeque.peekBack()?.adjClose as number) >= adjClose
+        )
+          minDeque.pop();
+
+        while (
+          !maxDeque.isEmpty() &&
+          (maxDeque.peekBack()?.adjClose as number) <= adjClose
+        )
+          maxDeque.pop();
+
+        minDeque.push({ date, adjClose });
+        maxDeque.push({ date, adjClose });
+
+        promiseList.push(
+          this.stockRepository.update(
+            { isin, date },
+            {
+              yearMinPrice: minDeque.peekFront()?.adjClose as number,
+              yearMaxPrice: maxDeque.peekFront()?.adjClose as number,
+            },
+          ),
+        );
+
+        await clearPromiseList();
+      }
+      await clearPromiseList();
+    }
   }
 }

@@ -42,7 +42,9 @@ export class CrawlController {
     //   curr.subtract({ day: 1 });
     // }
 
-    return this.crawlService.crawlDaily(hyphenDate);
+    await this.crawlService.crawlDaily(hyphenDate);
+    await this.crawlService.checkForStockSplit();
+    await this.crawlOhlcv.updateAccPropForADay(hyphenDate);
   }
 
   @Post('/basic-info')
