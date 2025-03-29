@@ -114,7 +114,7 @@ export class DataService {
     const res = await this.stockRepository.manager.query(
       `
       SELECT * FROM 
-        (select * from Korstock where date = ?) k
+        (select * from KorStock where date = ?) k
       LEFT JOIN
         (SELECT MIN(adjClose) yearMinPrice, MAX(adjClose) yearMaxPrice, isin from KorStock 
         where date >= ? and date <= ? 
