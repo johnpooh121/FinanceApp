@@ -57,7 +57,7 @@ const getUserInfo = async () => {
     } = user.criteria;
     if (minMarketCap || maxMarketCap)
       texts.push(
-        `시가총액 ${minMarketCap ? `${minMarketCap}원 이상, ` : ''} ${maxMarketCap ? `${maxMarketCap원} 이하` : ''}`,
+        `시가총액 ${minMarketCap ? `${minMarketCap}원 이상, ` : ''} ${maxMarketCap ? `${maxMarketCap}원 이하` : ''}`,
       );
     if (minPer || maxPer)
       texts.push(

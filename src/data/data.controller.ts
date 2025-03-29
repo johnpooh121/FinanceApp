@@ -24,11 +24,13 @@ export class DataController {
   }
 
   @Post('/recommend')
+  @UseGuards(UserGuard)
   @ApiOperation({ summary: '조건에 맞는 종목 출력' })
   async getRecommend(
     @Body() body: DataCriteriaDTO,
-    @UserId() userId: string,
-  ): Promise<KorStockEntity[]> {
-    return this.dataService.getRecommend(body, userId);
+  ): Promise<
+    (KorStockEntity & { yearMaxPrice: number; yearMinPrice: number })[]
+  > {
+    return this.dataService.getRecommend(body);
   }
 }

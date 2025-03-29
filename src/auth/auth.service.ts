@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
+import { Auth, google } from 'googleapis';
 import {
   ACCESS_TOKEN_SECRET,
   BEARER_TOKEN_SECRET,
@@ -9,18 +10,30 @@ import {
   KAKAO_REDIRECT_URI,
   MAX_USER_COUNT,
   MONTHLY_QUOTA,
+  MY_HOST,
   REFRESH_TOKEN_SECRET,
 } from 'src/common/constant';
+import { MetadataEntity } from 'src/entities/metadata.entity';
 import { UserEntity } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
+  private oauth2Client: Auth.OAuth2Client;
+
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(MetadataEntity)
+    private readonly metadataRepository: Repository<MetadataEntity>,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.oauth2Client = new google.auth.OAuth2(
+      process.env.GCP_CLIENT_ID,
+      process.env.GCP_CLIENT_SECRET,
+      `http://${MY_HOST}/auth/google/callback`,
+    );
+  }
 
   async kakaoCallback(code: string) {
     const res = await axios({
@@ -91,5 +104,28 @@ export class AuthService {
       { id },
       { secret: REFRESH_TOKEN_SECRET, expiresIn: 60 * 60 },
     );
+  }
+
+  async googleOauth2() {
+    const scopes = ['https://mail.google.com/'];
+    const url = this.oauth2Client.generateAuthUrl({
+      access_type: 'offline',
+      scope: scopes,
+    });
+    return url;
+  }
+
+  async googleCallback(code: string) {
+    const { tokens } = await this.oauth2Client.getToken(code);
+    if (tokens.refresh_token) {
+      await this.metadataRepository.upsert(
+        {
+          key: 'refresh-token',
+          value: tokens.refresh_token as string,
+        },
+        ['key'],
+      );
+      console.log('saved tokens successfully');
+    }
   }
 }

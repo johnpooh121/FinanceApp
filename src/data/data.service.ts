@@ -83,7 +83,7 @@ export class DataService {
     });
   }
 
-  async getRecommend(body: DataCriteriaDTO, userId: string) {
+  async getRecommend(body: DataCriteriaDTO) {
     const { maxPbr, maxPer, minDy, minPbr, minPer, vsHighPrice, vsLowPrice } =
       body;
     const { date: latestWorkDay } = await this.stockRepository.findOneOrFail({

@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-ec2": "^3.764.0",
+    "@google-cloud/local-auth": "^3.0.1",
     "@nestjs/cli": "^11.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.0",
@@ -38,6 +39,7 @@
     "dotenv": "^16.4.7",
     "eslint-plugin-unused-imports": "^4.1.4",
     "express-basic-auth": "^1.2.1",
+    "googleapis": "^148.0.0",
     "hbs": "^4.2.0",
     "iconv-lite": "^0.6.3",
     "moment-timezone": "^0.5.47",

@@ -66,4 +66,16 @@ export class AuthController {
       throw new UnauthorizedException();
     }
   }
+
+  @Get('/google/oauth2')
+  @ApiOperation({ description: 'google refresh token 발급' })
+  async googleOauth2() {
+    return this.authService.googleOauth2();
+  }
+
+  @Get('/google/callback')
+  @ApiOperation({ description: '구글 로그인 callback api' })
+  async googleCallback(@Query('code') code) {
+    return this.authService.googleCallback(code);
+  }
 }
