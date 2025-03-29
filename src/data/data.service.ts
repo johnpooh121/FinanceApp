@@ -114,17 +114,12 @@ export class DataService {
 
     const res = await this.stockRepository.manager.query(
       `
-      SELECT * FROM 
-        (select * from KorStock where date = ?) k
-      LEFT JOIN
-        (SELECT MIN(adjClose) yearMinPrice, MAX(adjClose) yearMaxPrice, isin from KorStock 
-        where date >= ? and date <= ? 
-        group by isin) k2 on k.isin=k2.isin
-      ${whereQuery.length > 0 ? `WHERE ${whereQuery.join(' AND ')}` : ''}
+      select * from KorStock where date = ?
+        ${whereQuery.length > 0 ? `AND ${whereQuery.join(' AND ')}` : ''}
       order by marketCap desc
       limit 20
       `,
-      [latestWorkDay, aYearAgo, latestWorkDay],
+      [latestWorkDay],
     );
     return res;
   }
