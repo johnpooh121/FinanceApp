@@ -129,13 +129,26 @@ export class DataService {
     let promiseList: Promise<any>[] = [];
     const clearPromiseList = async () => {
       if (promiseList.length > 200) {
+        // console.time('db');
         await Promise.all(promiseList);
         promiseList = [];
+        // console.timeEnd('db');
       }
     };
     for (const stock of infoList) {
-      console.log('updateing stock ', stock.code, stock.korNameShorten);
+      console.log(
+        'updating yearlyPrice of stock ',
+        stock.code,
+        stock.korNameShorten,
+      );
+
       const { isin } = stock;
+      if (stock.code < '015860') continue;
+      // const isAllFilled = await this.stockRepository.find({
+      //   where: { isin, yearMaxPrice: IsNull() },
+      // });
+      // if (isAllFilled.length === 0) continue;
+      // console.time('upd-stock');
       const dataList = await this.stockRepository.find({
         where: { isin },
         order: { date: 'ASC' },
@@ -189,7 +202,9 @@ export class DataService {
 
         await clearPromiseList();
       }
-      await clearPromiseList();
+      await Promise.all(promiseList);
+      promiseList = [];
+      // console.timeEnd('upd-stock');
     }
   }
 }
