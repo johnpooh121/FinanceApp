@@ -143,7 +143,7 @@ export class DataService {
       );
 
       const { isin } = stock;
-      if (stock.code < '015860') continue;
+      if (stock.code < '025860') continue;
       // const isAllFilled = await this.stockRepository.find({
       //   where: { isin, yearMaxPrice: IsNull() },
       // });
