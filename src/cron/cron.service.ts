@@ -121,7 +121,8 @@ export class CronService {
       this.oauth2Client.setCredentials({
         refresh_token: process.env.GCP_REFRESH_TOKEN,
       });
-      await this.oauth2Client.getAccessToken();
+      const res = await this.oauth2Client.getAccessToken();
+      console.log(res.res?.data);
     } catch (e) {
       try {
         console.log(e, 'failed to refresh with env token');
@@ -130,7 +131,8 @@ export class CronService {
             key: 'refresh-token',
           });
         this.oauth2Client.setCredentials({ refresh_token });
-        await this.oauth2Client.getAccessToken();
+        const res = await this.oauth2Client.getAccessToken();
+        console.log(res.res?.data);
       } catch (e) {
         console.log(e, 'failed to refresh with saved token');
         return false;

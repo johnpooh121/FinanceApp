@@ -31,7 +31,7 @@ export class AuthService {
     this.oauth2Client = new google.auth.OAuth2(
       process.env.GCP_CLIENT_ID,
       process.env.GCP_CLIENT_SECRET,
-      `http://${MY_HOST}/auth/google/callback`,
+      `http://localhost:3000/auth/google/callback`,
     );
   }
 
