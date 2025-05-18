@@ -78,4 +78,21 @@ export class AuthController {
   async googleCallback(@Query('code') code) {
     return this.authService.googleCallback(code);
   }
+
+  @Get('/kakao/callback/next')
+  @ApiOperation({ description: '카카오 로그인 callback api' })
+  @Redirect()
+  async kakaoCallbackForNextJs(
+    @Query('code') code,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const refreshToken = await this.authService.kakaoCallback(code);
+    res.cookie(
+      'finance-app-refresh-token',
+      refreshToken,
+      this.defaultCookieOptions,
+    );
+
+    return { url: `http://${MY_HOST}/web/mypage`, status: 302 };
+  }
 }
