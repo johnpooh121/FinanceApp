@@ -11,6 +11,7 @@ import {
   MAX_USER_COUNT,
   MONTHLY_QUOTA,
   REFRESH_TOKEN_SECRET,
+  SERVER_PORT,
 } from 'src/common/constant';
 import { MetadataEntity } from 'src/entities/metadata.entity';
 import { UserEntity } from 'src/entities/user.entity';
@@ -30,7 +31,7 @@ export class AuthService {
     this.oauth2Client = new google.auth.OAuth2(
       process.env.GCP_CLIENT_ID,
       process.env.GCP_CLIENT_SECRET,
-      `http://localhost:3000/auth/google/callback`,
+      `http://localhost:${SERVER_PORT}/auth/google/callback`,
     );
   }
 

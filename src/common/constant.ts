@@ -8,6 +8,8 @@ export const BE_HOST = process.env.BE_HOST as string;
 
 export const FE_HOST = process.env.FE_HOST as string;
 
+export const SERVER_PORT = (process.env.PORT as string) ?? 3000;
+
 export const KAKAO_REDIRECT_URI = `http://${BE_HOST}/auth/kakao/callback`;
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;

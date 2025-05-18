@@ -6,6 +6,7 @@ import 'dotenv/config';
 import expressBasicAuth from 'express-basic-auth';
 import { join } from 'path';
 import { AppModule } from './app.module';
+import { SERVER_PORT } from './common/constant';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -39,6 +40,6 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(SERVER_PORT);
 }
 bootstrap();
