@@ -93,6 +93,6 @@ export class AuthController {
       this.defaultCookieOptions,
     );
 
-    return { url: `${PROTOCOL}://${FE_HOST}/web/mypage`, status: 302 };
+    return { url: `${PROTOCOL}://${FE_HOST}/`, status: 302 };
   }
 }
