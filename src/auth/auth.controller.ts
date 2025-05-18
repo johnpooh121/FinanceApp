@@ -86,7 +86,7 @@ export class AuthController {
     @Query('code') code,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const refreshToken = await this.authService.kakaoCallback(code);
+    const refreshToken = await this.authService.kakaoCallback(code, true);
     res.cookie(
       'finance-app-refresh-token',
       refreshToken,

@@ -35,14 +35,14 @@ export class AuthService {
     );
   }
 
-  async kakaoCallback(code: string) {
+  async kakaoCallback(code: string, isNext?: boolean) {
     const res = await axios({
       url: 'https://kauth.kakao.com/oauth/token',
       method: 'POST',
       data: new URLSearchParams({
         grant_type: 'authorization_code',
         client_id: KAKAO_API_KEY,
-        redirect_uri: KAKAO_REDIRECT_URI,
+        redirect_uri: `${KAKAO_REDIRECT_URI}${isNext ? '/next' : ''}`,
         code,
       }),
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
