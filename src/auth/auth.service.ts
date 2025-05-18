@@ -10,7 +10,6 @@ import {
   KAKAO_REDIRECT_URI,
   MAX_USER_COUNT,
   MONTHLY_QUOTA,
-  MY_HOST,
   REFRESH_TOKEN_SECRET,
 } from 'src/common/constant';
 import { MetadataEntity } from 'src/entities/metadata.entity';

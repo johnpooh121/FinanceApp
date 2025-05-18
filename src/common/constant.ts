@@ -2,9 +2,13 @@ export const STARTDATE = '2005-01-03';
 
 export const KAKAO_API_KEY = process.env.KAKAO_API_KEY as string;
 
-export const MY_HOST = process.env.MY_HOST as string;
+export const ROOT_DOMAIN = process.env.ROOT_DOMAIN as string;
 
-export const KAKAO_REDIRECT_URI = `http://${process.env.MY_HOST}/auth/kakao/callback`;
+export const BE_HOST = process.env.BE_HOST as string;
+
+export const FE_HOST = process.env.FE_HOST as string;
+
+export const KAKAO_REDIRECT_URI = `http://${FE_HOST}/auth/kakao/callback`;
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 

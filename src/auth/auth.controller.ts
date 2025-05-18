@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { CookieOptions, Request, Response } from 'express';
-import { MY_HOST } from 'src/common/constant';
+import { BE_HOST, FE_HOST, ROOT_DOMAIN } from 'src/common/constant';
 import { AuthService } from './auth.service';
 
 @Controller('/auth')
@@ -20,7 +20,7 @@ export class AuthController {
   defaultCookieOptions: CookieOptions = {
     httpOnly: true,
     sameSite: 'strict',
-    domain: process.env.IS_LOCAL === 'true' ? undefined : MY_HOST,
+    domain: ROOT_DOMAIN,
   };
 
   @Get('/kakao/callback')
@@ -37,7 +37,7 @@ export class AuthController {
       this.defaultCookieOptions,
     );
 
-    return { url: `http://${MY_HOST}/web/mypage`, status: 302 };
+    return { url: `http://${BE_HOST}/web/mypage`, status: 302 };
   }
 
   @Post('/refresh')
@@ -93,6 +93,6 @@ export class AuthController {
       this.defaultCookieOptions,
     );
 
-    return { url: `http://${MY_HOST}/web/mypage`, status: 302 };
+    return { url: `http://${FE_HOST}/web/mypage`, status: 302 };
   }
 }
