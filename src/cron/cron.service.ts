@@ -106,7 +106,7 @@ export class CronService {
           ${dataHtml}
         </tbody>
       </table>`,
-      'http://finance-app.ap-northeast-2.elasticbeanstalk.com/mypage 에서 설정한 조건에 맞는 종목이 있을 시 발송되는 이메일입니다.<br/>',
+      'https://home.finance-app.site/mypage 에서 설정한 조건에 맞는 종목이 있을 시 발송되는 이메일입니다.<br/>',
       '구독 관련 설정은 위 페이지에서 수정하실 수 있습니다.<br/>',
       '종목 정보는 모두 전일 17시 기준입니다.<br/>',
       '📣 <b> 투자의 책임은 본인에게 있습니다! </b> 📣',

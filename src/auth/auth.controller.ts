@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { CookieOptions, Request, Response } from 'express';
-import { BE_HOST, FE_HOST, ROOT_DOMAIN } from 'src/common/constant';
+import { BE_HOST, FE_HOST, PROTOCOL, ROOT_DOMAIN } from 'src/common/constant';
 import { AuthService } from './auth.service';
 
 @Controller('/auth')
@@ -37,7 +37,7 @@ export class AuthController {
       this.defaultCookieOptions,
     );
 
-    return { url: `http://${BE_HOST}/web/mypage`, status: 302 };
+    return { url: `${PROTOCOL}://${BE_HOST}/web/mypage`, status: 302 };
   }
 
   @Post('/refresh')
@@ -93,6 +93,6 @@ export class AuthController {
       this.defaultCookieOptions,
     );
 
-    return { url: `http://${FE_HOST}/web/mypage`, status: 302 };
+    return { url: `${PROTOCOL}://${FE_HOST}/web/mypage`, status: 302 };
   }
 }
