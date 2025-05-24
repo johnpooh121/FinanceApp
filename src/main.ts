@@ -4,12 +4,26 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import expressBasicAuth from 'express-basic-auth';
+import { readFileSync } from 'fs';
 import { join } from 'path';
 import { AppModule } from './app.module';
-import { SERVER_PORT } from './common/constant';
+import { FE_HOST, SERVER_PORT } from './common/constant';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    ...(process.env.IS_LOCAL && {
+      httpsOptions: {
+        key: readFileSync('mydomain.key'),
+        cert: readFileSync('mydomain.crt'),
+      },
+    }),
+  });
+  app.enableCors({
+    origin: FE_HOST,
+    methods: ['GET', 'POST'],
+    credentials: true,
+    // maxAge: 86400,
+  });
 
   const config = new DocumentBuilder()
     .setTitle('Finance App API Reference')

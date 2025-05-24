@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { CookieOptions, Request, Response } from 'express';
-import { BE_HOST, FE_HOST, PROTOCOL, ROOT_DOMAIN } from 'src/common/constant';
+import { BE_HOST, FE_HOST, ROOT_DOMAIN } from 'src/common/constant';
 import { AuthService } from './auth.service';
 
 @Controller('/auth')
@@ -19,6 +19,7 @@ export class AuthController {
 
   defaultCookieOptions: CookieOptions = {
     httpOnly: true,
+    secure: true,
     sameSite: 'strict',
     domain: ROOT_DOMAIN,
   };
@@ -37,7 +38,10 @@ export class AuthController {
       this.defaultCookieOptions,
     );
 
-    return { url: `${PROTOCOL}://${BE_HOST}/web/mypage`, status: 302 };
+    return {
+      url: `${BE_HOST}/web/mypage`,
+      status: 302,
+    };
   }
 
   @Post('/refresh')
@@ -48,6 +52,7 @@ export class AuthController {
   ) {
     try {
       const oldRefreshToken = req.cookies['finance-app-refresh-token'];
+      console.log('sent token : ', oldRefreshToken);
       const { accessToken, refreshToken, bearerToken } =
         await this.authService.verifyAndRefresh(oldRefreshToken);
       res.cookie(
@@ -93,6 +98,6 @@ export class AuthController {
       this.defaultCookieOptions,
     );
 
-    return { url: `${PROTOCOL}://${FE_HOST}/`, status: 302 };
+    return { url: FE_HOST, status: 302 };
   }
 }

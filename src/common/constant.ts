@@ -2,6 +2,8 @@ export const STARTDATE = '2005-01-03';
 
 export const KAKAO_API_KEY = process.env.KAKAO_API_KEY as string;
 
+export const IS_LOCAL = (process.env.IS_LOCAL as string) === 'true';
+
 export const ROOT_DOMAIN = process.env.ROOT_DOMAIN as string;
 
 export const BE_HOST = process.env.BE_HOST as string;
@@ -10,9 +12,7 @@ export const FE_HOST = process.env.FE_HOST as string;
 
 export const SERVER_PORT = (process.env.PORT as string) ?? 3000;
 
-export const PROTOCOL = process.env.IS_LOCAL == 'true' ? 'http' : 'https';
-
-export const KAKAO_REDIRECT_URI = `${PROTOCOL}://${BE_HOST}/auth/kakao/callback`;
+export const KAKAO_REDIRECT_URI = `${BE_HOST}/auth/kakao/callback`;
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET as string;
 
