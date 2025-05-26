@@ -20,7 +20,7 @@ async function bootstrap() {
   });
   app.enableCors({
     origin: FE_HOST,
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST', 'PATCH'],
     credentials: true,
     // maxAge: 86400,
   });

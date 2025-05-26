@@ -91,10 +91,6 @@ export class DataService {
       where: {},
       order: { date: 'desc' },
     });
-    const aYearAgo = moment
-      .utc(latestWorkDay)
-      .subtract({ year: 1 })
-      .format('YYYY-MM-DD');
 
     const whereQuery: string[] = [];
     if (maxPbr) whereQuery.push(`(pbr <= ${maxPbr})`);
