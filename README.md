@@ -96,7 +96,7 @@
 ### 3.6. 웹 페이지
 
 - 처음에는 이왕 하는거 리액트나 vue를 공부해볼까 싶었지만, 시간도 부족하고 AWS Free Tier에서 프론트엔드용 인스턴스를 새로 띄우거나 t3.micro에 api서버와 프론트엔드를 같이 실행하긴 부담이 클 것 같았다
-- 그래서 처음에는 nestjs에서 지원하는 HandleBars 라는 간단한 컨텐츠 호스팅 기능을 이용해서 api 서버와 웹페이지 서버를 같이 구현하였다 (구현 링크 : https://api.finance-app.site/web/login)
+- 그래서 일단 nestjs에서 지원하는 HandleBars 라는 간단한 컨텐츠 호스팅 기능을 이용해서 api 서버와 웹페이지 서버를 같이 구현하였다 (구현 링크 : https://api.finance-app.site/web/login)
 - 그러나 순수 html의 한계로 페이지 가독성이 너무 안좋기도 하고, 백엔드 개발만 하다보니 프론트엔드는 어떻게 구현하는지 궁금했어서 맛보기로 vercel + NextJs 기반 프론트엔드를 개발하였다
 - 다행히 미리 짜둔 순수 html + js 코드를 기반으로 chatgpt의 도움을 받아 빠르게 현대적인 UI의 프론트엔드를 개발할 수 있었다
 
