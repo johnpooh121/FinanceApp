@@ -88,14 +88,14 @@ export class AuthService {
   issueAccessToken(id: string) {
     return this.jwtService.sign(
       { id },
-      { secret: ACCESS_TOKEN_SECRET, expiresIn: 60 * 10 },
+      { secret: ACCESS_TOKEN_SECRET, expiresIn: 60 * 30 },
     );
   }
 
   issueBearerToken(id: string) {
     return this.jwtService.sign(
       { id },
-      { secret: BEARER_TOKEN_SECRET, expiresIn: 60 * 10 },
+      { secret: BEARER_TOKEN_SECRET, expiresIn: 60 * 30 },
     );
   }
 
